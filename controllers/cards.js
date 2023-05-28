@@ -24,7 +24,7 @@ const createCard = (req, res) => {
         res.status(500).send({ message: `Произошла ошибка ${err.name}` });
       }
     });
-}
+};
 
 const deleteCard = (req, res) => {
   cardModel
@@ -52,7 +52,7 @@ const likeCard = (req, res) => {
   cardModel.findByIdAndUpdate(
     req.params.cardId,
     { $addToSet: { likes: req.user._id } },
-    { new: true }
+    { new: true },
   )
     .orFail(() => {
       throw new Error('NotFound');
@@ -61,7 +61,7 @@ const likeCard = (req, res) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(404).send({
-          message: `Карточка не найдена`,
+          message: 'Карточка не найдена',
         });
       } else {
         res.status(500).send({ message: `Произошла ошибка ${err.name}` });
@@ -79,9 +79,7 @@ const dislikeCard = (req, res) => {
       throw new Error('NotFound');
     })
     .then((card) => res.send({ data: card }))
-    .catch((err) =>
-      res.status(500).send({ message: `Произошла ошибка ${err.name}` })
-    );
+    .catch((err) => res.status(500).send({ message: `Произошла ошибка ${err.name}` }));
 };
 
 module.exports ={
@@ -89,5 +87,5 @@ module.exports ={
   createCard,
   deleteCard,
   likeCard,
-  dislikeCard
+  dislikeCard,
 }
