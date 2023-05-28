@@ -7,7 +7,7 @@ const getUserById = (req, res) => {
       throw new Error('Not found');
     })
     .then((user) => {
-      res.send({data: user});
+      res.send({ data: user });
     })
     .catch((err) => {
       if (err.name === ('CastError' || 'ValidationError')) {
@@ -25,7 +25,7 @@ const getUserById = (req, res) => {
           message: `Юзер не найден по указанному id ${req.params.userId}`,
         });
       }
-      return res.status(500).send({ message: `Произошла ошибка ${err.name}` });
+      return res.status(500).send({message: `Произошла ошибка ${err.name}`});
     });
 };
 
@@ -41,7 +41,7 @@ const createUser = (req, res) => {
           message: `Переданы некорректные данные с ошибкой ${err.name}`,
         });
       } else {
-        res.status(500).send({ message: `Произошла ошибка ${err.name}` });
+        res.status(500).send({message: `Произошла ошибка ${err.name}`});
       }
     });
 };
@@ -50,9 +50,9 @@ const getUser = (req, res) => {
   userModel
     .find({})
     .then((users) => {
-      res.send({data: users});
+      res.send({ data: users });
     })
-    .catch((err) => res.status(500).send({ message: `Произошла ошибка ${err.name}` }));
+    .catch((err) => res.status(500).send({message: `Произошла ошибка ${err.name}`}));
 };
 
 const updateUser = (req, res) => {
@@ -60,23 +60,23 @@ const updateUser = (req, res) => {
     .create(req.body)
     .findByIdAndUpdate(
       req.user._id,
-      { new: true, runValidators: true },
+      {new: true, runValidators: true},
     )
-    .then((users) => res.send({data: users}))
-      .catch((err) => {
-        if (err.name === 'ValidationError') {
-          res.status(400).send({
-            message: `Переданы некорректные данные с ошибкой ${err.name}`,
-          });
-        }
-        if (err.name === 'CastError') {
-          res.status(404).send({
-            message: `Юзер не найден по указанному id ${req.params.userId}`,
-          });
-        } else {
-          res.status(500).send({ message: `Произошла ошибка ${err.name}` });
-        }
-      });
+    .then((users) => res.send({ data: users }))
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(400).send({
+          message: `Переданы некорректные данные с ошибкой ${err.name}`,
+        });
+      }
+      if (err.name === 'CastError') {
+        res.status(404).send({
+          message: `Юзер не найден по указанному id ${req.params.userId}`,
+        });
+      } else {
+        res.status(500).send({message: `Произошла ошибка ${err.name}`});
+      }
+    });
 };
 
 const updateUserAvatar = (req, res) => {
@@ -84,10 +84,10 @@ const updateUserAvatar = (req, res) => {
     .create(req.body)
     .findByIdAndUpdate(
       req.user._id,
-      { new: true, runValidators: true },
+      {new: true, runValidators: true},
     )
     .then((user) => res.send({ data: user }))
-    .catch((err) => res.status(500).send({ message: `Произошла ошибка ${err.name}` }));
+    .catch((err) => res.status(500).send({message: `Произошла ошибка ${err.name}`}));
 };
 
 module.exports = {
