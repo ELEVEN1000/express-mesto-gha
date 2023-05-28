@@ -7,7 +7,7 @@ const getUserById = (req, res) => {
       throw new Error('Not found');
     })
     .then((user) => {
-      res.send(user);
+      res.send({data: user});
     })
     .catch((err) => {
       if (err.name === ('CastError' || 'ValidationError')) {
@@ -50,7 +50,7 @@ const getUser = (req, res) => {
   userModel
     .find({})
     .then((users) => {
-      res.send(users);
+      res.send({data: users});
     })
     .catch((err) => res.status(500).send({ message: `Произошла ошибка ${err.name}` }));
 };
@@ -62,7 +62,7 @@ const updateUser = (req, res) => {
       req.user._id,
       { new: true, runValidators: true },
     )
-    .then((users) => res.send(users)
+    .then((users) => res.send({data: users}))
       .catch((err) => {
         if (err.name === 'ValidationError') {
           res.status(400).send({
@@ -76,7 +76,7 @@ const updateUser = (req, res) => {
         } else {
           res.status(500).send({ message: `Произошла ошибка ${err.name}` });
         }
-      }));
+      });
 };
 
 const updateUserAvatar = (req, res) => {
