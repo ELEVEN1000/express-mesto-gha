@@ -1,4 +1,4 @@
-const userModel = require('../models/user')
+const userModel = require('../models/user');
 
 const getUserById = (req, res) => {
   userModel
@@ -10,27 +10,26 @@ const getUserById = (req, res) => {
       res.send(user);
     })
     .catch((err) => {
-      if (err.name === ("CastError" || "ValidationError")) {
+      if (err.name === ('CastError' || 'ValidationError')) {
         return res.status(400).send({
           message: `Некорректный id ${req.params.userId}`,
         });
       }
-      if (err.name === "NotValidId") {
+      if (err.name === 'NotValidId') {
         return res.status(400).send({
           message: `Некорректный id ${req.params.userId}`,
         });
       }
-      if (err.name === "NotFound") {
+      if (err.name === 'NotFound') {
         return res.status(404).send({
           message: `Юзер не найден по указанному id ${req.params.userId}`,
         });
       } else {
-        return res
-          .status(500)
-          .send({ message: `Произошла ошибка ${err.name}` });
+        return res.status(500).send({
+          message: `Произошла ошибка ${err.name}` });
       }
     });
-}
+};
 
 const createUser = (req, res) => {
   userModel
@@ -39,7 +38,7 @@ const createUser = (req, res) => {
       res.status(201).send(user);
     })
     .catch((err) => {
-      if (err.name === "ValidationError") {
+      if (err.name === 'ValidationError') {
         res.status(400).send({
           message: `Переданы некорректные данные с ошибкой ${err.name}`,
         });
@@ -74,7 +73,7 @@ const updateUser = (req, res) => {
           message: `Переданы некорректные данные с ошибкой ${err.name}`,
         });
       }
-      if (err.name === "CastError") {
+      if (err.name === 'CastError') {
         res.status(404).send({
           message: `Юзер не найден по указанному id ${req.params.userId}`,
         });

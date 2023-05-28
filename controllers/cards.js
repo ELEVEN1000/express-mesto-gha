@@ -82,10 +82,10 @@ const dislikeCard = (req, res) => {
     .catch((err) => res.status(500).send({ message: `Произошла ошибка ${err.name}` }));
 };
 
-module.exports ={
+module.exports = {
   getCards,
   createCard,
   deleteCard,
   likeCard,
   dislikeCard,
-}
+};
