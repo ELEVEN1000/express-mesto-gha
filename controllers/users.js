@@ -46,7 +46,7 @@ const createUser = (req, res) => {
         res.status(500).send({ message: `Произошла ошибка ${err.name}` });
       }
     });
-}
+};
 
 const getUser = (req, res) => {
   userModel
@@ -54,18 +54,16 @@ const getUser = (req, res) => {
     .then((users) => {
       res.send(users);
     })
-    .catch((err) =>
-      res.status(500).send({ message: `Произошла ошибка ${err.name}` })
-    );
-}
+    .catch((err) => res.status(500).send({ message: `Произошла ошибка ${err.name}` }));
+};
 
 const updateUser = (req, res) => {
   userModel
     .create(req.body)
     .findByIdAndUpdate(
-    req.user._id,
-    { new: true, runValidators: true }
-  )
+      req.user._id,
+      { new: true, runValidators: true }
+    )
     .then((users) => res.send(users)
     .catch((err) => {
       if (err.name === "ValidationError") {
