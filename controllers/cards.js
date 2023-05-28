@@ -1,4 +1,4 @@
-const cardModel = require('../models/card')
+const cardModel = require('../models/card');
 
 const getCards = (req, res) => {
   cardModel
@@ -6,10 +6,8 @@ const getCards = (req, res) => {
     .then((cards) => {
       res.send(cards);
     })
-    .catch((err) =>
-      res.status(500).send({ message: `Произошла ошибка ${err.name}` })
-    );
-}
+    .catch((err) => res.status(500).send({ message: `Произошла ошибка ${err.name}` }));
+};
 
 const createCard = (req, res) => {
   cardModel
