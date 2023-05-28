@@ -25,8 +25,7 @@ const getUserById = (req, res) => {
           message: `Юзер не найден по указанному id ${req.params.userId}`,
         });
       } else {
-        return res.status(500).send({
-          message: `Произошла ошибка ${err.name}` });
+        return res.status(500).send({ message: `Произошла ошибка ${err.name}` });
       }
     });
 };
@@ -78,7 +77,7 @@ const updateUser = (req, res) => {
         } else {
           res.status(500).send({ message: `Произошла ошибка ${err.name}` });
         }
-      }))
+      }));
 };
 
 const updateUserAvatar = (req, res) => {
@@ -86,12 +85,10 @@ const updateUserAvatar = (req, res) => {
     .create(req.body)
     .findByIdAndUpdate(
     req.user._id,
-    { new: true, runValidators: true }
-  )
+      { new: true, runValidators: true },
+    )
     .then((user) => res.send({ data: user }))
-    .catch((err) =>
-      res.status(500).send({ message: `Произошла ошибка ${err.name}` })
-    );
+    .catch((err) => res.status(500).send({ message: `Произошла ошибка ${err.name}` }));
 };
 
 module.exports = {getUserById, getUser, createUser, updateUser, updateUserAvatar};
