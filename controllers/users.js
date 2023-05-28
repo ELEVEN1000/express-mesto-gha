@@ -24,9 +24,8 @@ const getUserById = (req, res) => {
         return res.status(404).send({
           message: `Юзер не найден по указанному id ${req.params.userId}`,
         });
-      } else {
-        res.status(500).send({ message: `Произошла ошибка ${err.name}` });
       }
+      return res.status(500).send({ message: `Произошла ошибка ${err.name}` });
     });
 };
 
@@ -91,4 +90,10 @@ const updateUserAvatar = (req, res) => {
     .catch((err) => res.status(500).send({ message: `Произошла ошибка ${err.name}` }));
 };
 
-module.exports = { getUserById, getUser, createUser, updateUser, updateUserAvatar };
+module.exports = {
+  getUserById,
+  getUser,
+  createUser,
+  updateUser,
+  updateUserAvatar
+};
