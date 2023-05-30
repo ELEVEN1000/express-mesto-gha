@@ -5,18 +5,22 @@ const { ObjectId } = mongoose.Schema.Types;
 const cardSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true,
-    minLength: 2,
-    maxLength: 30,
+    required: [true, 'Поле "name" должно быть заполнено'],
+    minlength: [2, 'Минимальная длина поля "name" - 2'],
+    maxlength: [30, 'Максимальная длина поля "name" - 30'],
   },
   link: {
     type: String,
-    required: true,
+    validate: {
+      validator: (v) => validator.isURL(v),
+      message: 'Некорректный URL',
+    },
+    required: [true, 'Поле "link" должно быть заполнено'],
   },
   owner: {
     type: ObjectId,
     ref: 'user',
-    required: true,
+    required: [true, 'Поле "owner" должно быть заполнено'],
   },
   likes: [
     {

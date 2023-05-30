@@ -1,5 +1,5 @@
 const Card = require('../models/card');
-const { ERROR_CODE_BAD_REQUEST, ERROR_CODE_NOT_FOUND, ERROR_CODE_INTERNAL } = require('../constants');
+const { ERROR_CODE_BAD_REQUEST, ERROR_CODE_NOT_FOUND, ERROR_CODE_INTERNAL } = require('../utils/constants');
 
 const getCards = (req, res) => {
   Card.find({})
