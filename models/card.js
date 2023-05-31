@@ -1,8 +1,6 @@
 const mongoose = require('mongoose');
 const validator = require('validator');
 
-const { ObjectId } = mongoose.Schema.Types;
-
 const cardSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -19,13 +17,13 @@ const cardSchema = new mongoose.Schema({
     required: [true, 'Поле "link" должно быть заполнено'],
   },
   owner: {
-    type: ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: 'user',
     required: [true, 'Поле "owner" должно быть заполнено'],
   },
   likes: [
     {
-      type: ObjectId,
+      type: [mongoose.Schema.Types.ObjectId],
       ref: 'user',
       default: [],
     },
