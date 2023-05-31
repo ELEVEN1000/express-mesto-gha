@@ -3,18 +3,15 @@ const User = require('../models/user');
 const getUserById = (req, res) => {
   User.findById(req.params.userId)
     .orFail(new Error('NotValidId'))
-    .then((user) => {
-      if (!user) {
-        res.status(404).send({ message: 'Пользователь по указанному id не найден.' });
-      }
-      return res.send({ data: user });
-    })
+    .then((users) => res.send(users))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Передан некорректный id пользователя.' });
-        return;
+        res.status(400).send({ message: 'Переданы некорректные данные' });
+      } else if (err.message === 'NotFound') {
+        res.status(404).send({ message: 'Пользователь по указанному id не найден' });
+      } else {
+        res.status(500).send({ message: 'На сервере произошла ошибка' });
       }
-      res.status(500).send({ message: 'На сервере произошла ошибка' });
     });
 };
 
@@ -34,7 +31,7 @@ const createUser = (req, res) => {
 
 const getUser = (req, res) => {
   User.find({})
-    .then((users) => res.send(users))
+    .then((users) => res.status(200).send(users))
     .catch(() => res.status(500).send({ message: 'На сервере произошла ошибка' }));
 };
 
