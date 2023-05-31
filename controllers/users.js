@@ -2,7 +2,7 @@ const User = require('../models/user');
 
 const getUserById = (req, res) => {
   User.findById(req.params.userId)
-    .orFail(new Error('NotValidId'))
+    .orFail(new Error('NotFound'))
     .then((users) => res.send(users))
     .catch((err) => {
       if (err.name === 'CastError') {
