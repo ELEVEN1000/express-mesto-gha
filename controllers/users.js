@@ -2,7 +2,8 @@ const User = require('../models/user');
 const {
   ERROR_CODE_BAD_REQUEST,
   ERROR_CODE_NOT_FOUND,
-  ERROR_CODE_INTERNAL} = require('../utils/constants');
+  ERROR_CODE_INTERNAL
+} = require('../utils/constants');
 
 const getUserById = (req, res) => {
   User.findById(req.params.userId)
