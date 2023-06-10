@@ -70,7 +70,6 @@ const login = (req, res, next) => {
     .catch(next);
 };
 
-
 const getUser = (req, res, next) => {
   User.find({})
     .then((users) => res.send({ data: users }))
