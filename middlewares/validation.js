@@ -1,54 +1,54 @@
-const { celebrate, Joi } = require('celebrate');
+const { celebrate, Joi, Segments } = require('celebrate');
 
 const urlRegex = /^(https?:\/\/)?(www\.)?[a-zA-Z0-9-]+\.[a-zA-Z]{2,}(\/[a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=]*)?$/;
 
 const loginValidator = celebrate({
-  body: Joi.object().keys({
+  [Segments.BODY]: {
     email: Joi.string().required().email(),
-    password: Joi.string().required().min(6),
-  }),
+    password: Joi.string().required().min(2),
+  },
 });
 
 const signupValidator = celebrate({
-  body: Joi.object().keys({
-    email: Joi.string().required().email(),
-    password: Joi.string().required().min(6),
+  [Segments.BODY]: {
     name: Joi.string().min(2).max(30),
     about: Joi.string().min(2).max(30),
     avatar: Joi.string().regex(urlRegex),
-  }),
+    email: Joi.string().required().email(),
+    password: Joi.string().required().min(2),
+  },
 });
 
 const getUserByIdValidator = celebrate({
-  params: Joi.object().keys({
-    userId: Joi.string().hex().length(24),
-  }),
+  [Segments.PARAMS]: {
+    userId: Joi.string().required().hex().length(24),
+  },
 });
 
 const updateProfileValidator = celebrate({
-  body: Joi.object().keys({
-    name: Joi.string().min(2).max(30),
-    about: Joi.string().min(2).max(30),
-  }),
+  [Segments.BODY]: {
+    name: Joi.string().required().min(2).max(30),
+    about: Joi.string().required().min(2).max(30),
+  },
 });
 
 const updateAvatarValidator = celebrate({
-  body: Joi.object().keys({
-    avatar: Joi.string().regex(urlRegex),
-  }),
+  [Segments.BODY]: {
+    avatar: Joi.string().required().regex(urlRegex),
+  },
 });
 
 const createCardValidator = celebrate({
-  body: Joi.object().keys({
+  [Segments.BODY]: {
     name: Joi.string().required().min(2).max(30),
     link: Joi.string().required().regex(urlRegex),
-  }),
+  },
 });
 
 const inputIdCardValidator = celebrate({
-  params: Joi.object().keys({
-    cardId: Joi.string().hex().length(24),
-  }),
+  [Segments.PARAMS]: {
+    cardId: Joi.string().required().hex().length(24),
+  },
 });
 
 module.exports = {
