@@ -1,13 +1,13 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const { errors } = require('celebrate');
+const helmet = require('helmet');
 const router = require('./routes/index');
 const { login, createUser } = require('./controllers/users');
 const { loginValidator, signupValidator } = require('./middlewares/validation');
-const auth = require('./middlewares/auth');
 const { PORT = 3000 } = process.env;
 const errorHandler = require('./middlewares/errorHandler');
-const helmet = require('helmet');
+const auth = require('./middlewares/auth');
 
 const app = express();
 
