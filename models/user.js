@@ -28,9 +28,9 @@ const userSchema = new mongoose.Schema({
     required: [true, 'Поле "email" должно быть заполнено'],
     unique: true,
     validate(value) {
-    if (!validator.isEmail(value)) {
-      throw new Error('Некорректный email');
-    }}
+      if (!validator.isEmail(value)) {
+        throw new Error('Некорректный email');
+      }}
   },
   password: {
     type: String,

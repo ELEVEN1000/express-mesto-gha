@@ -37,7 +37,14 @@ const getUserById = (req, res) => {
 };
 
 const createUser = (req, res) => {
-  const { name, about, avatar, email, password } = req.body;
+  const {
+    name,
+    about,
+    avatar,
+    email,
+    password
+  } = req.body;
+
   bcrypt
     .hash(password, 10)
     .then((hash) => User.create({
@@ -46,7 +53,7 @@ const createUser = (req, res) => {
       avatar,
       email,
       password: hash,
-    }))
+    }));
 
   User.create({ name, about, avatar })
     .then((users) => res.status(CREATED_STATUS).send(users))
@@ -89,7 +96,7 @@ const getUserInfo = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => res.status(SUCCESS_STATUS).send(formatUserData(user)))
     .catch((err) => next(err));
-}
+};
 
 const updateUser = (req, res, updateData, next) => {
   User.findByIdAndUpdate(req.user._id, updateData, { new: true, runValidators: true })

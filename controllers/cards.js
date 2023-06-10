@@ -1,5 +1,5 @@
-const Card = require('../models/card');
 const { Error } = require('mongoose');
+const Card = require('../models/card');
 
 const {
   SUCCESS_STATUS,
