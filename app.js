@@ -5,6 +5,7 @@ const helmet = require('helmet');
 const router = require('./routes/index');
 const { login, createUser } = require('./controllers/users');
 const { loginValidator, signupValidator } = require('./middlewares/validation');
+
 const { PORT = 3000 } = process.env;
 const errorHandler = require('./middlewares/errorHandler');
 const auth = require('./middlewares/auth');

@@ -8,6 +8,7 @@ const {
   CREATED_STATUS,
 } = require('../utils/constants');
 
+const config = require('../utils/config');
 const BadRequestError = require('../utils/errors/badRequestError');
 const ConflictError = require('../utils/errors/conflictError');
 const NotFoundError = require('../utils/errors/notFoundError');
@@ -79,7 +80,7 @@ const login = (req, res, next) => {
           if (!matched) {
             return next(new UnauthorizedError('Неверный email или пароль'));
           }
-          const token = jwt.sign({ _id: user._id }, 'some-secret-key', { expiresIn: '7d' });
+          const token = jwt.sign({ _id: user._id }, config.jwtSecretKey, { expiresIn: '7d' });
           return res.send(token);
         });
     })
