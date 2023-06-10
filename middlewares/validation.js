@@ -1,5 +1,6 @@
 const { celebrate, Joi } = require('celebrate');
-const { regexLink } = require('../utils/constants');
+
+const regexLink = /^(https?:\/\/)?(www\.)?[a-zA-Z0-9-]+\.[a-zA-Z]{2,}(\/[a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=]*)?$/;
 
 const signinValidate = celebrate({
   body: Joi.object().keys({
