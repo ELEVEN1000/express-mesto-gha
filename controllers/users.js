@@ -37,7 +37,7 @@ const getUserById = (req, res) => {
     });
 };
 
-const createUser = (req, res) => {
+const createUser = (req, res, next) => {
   const {
     name,
     about,
@@ -54,17 +54,18 @@ const createUser = (req, res) => {
       avatar,
       email,
       password: hash,
-    }));
-
-  User.create({ name, about, avatar })
-    .then((users) => res.status(CREATED_STATUS).send(users))
+    })
+    .then((user) => res.status(CREATED_STATUS).send(formatUserData(user)))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        res.status(BadRequestError).send({ message: 'Переданы некорректные данные при создании пользователя.' });
-      } else {
-        res.status(ConflictError).send({ message: 'На сервере произошла ошибка' });
+      if (err instanceof Error.ValidationError) {
+        return next(new BadRequestError('Переданы некорректные данные при создании пользователя.'));
       }
-    });
+      if (err.code === 11000) {
+        return next(new ConflictError('Пользователь с таким email уже зарегистрирован'));
+      }
+      return next(err);
+    })
+    .catch(next));
 };
 
 const login = (req, res, next) => {
