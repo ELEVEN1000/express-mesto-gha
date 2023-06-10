@@ -3,6 +3,11 @@ const Card = require('../models/card');
 const BadRequestError = require('../utils/errors/badRequestError');
 const NotFoundError = require('../utils/errors/notFoundError');
 
+const {
+  SUCCESS_STATUS,
+  CREATED_STATUS,
+} = require('../utils/constants');
+
 const populateOptions = [
   { path: 'likes', select: ['name', 'about', 'avatar', '_id'] },
   { path: 'owner', select: ['name', 'about', 'avatar', '_id'] },
@@ -30,14 +35,14 @@ const formatCard = (card) => ({
 
 const getCards = (req, res, next) => {
   Card.find({})
-    .then((cards) => res.status(200).send(cards.map(formatCard)))
+    .then((cards) => res.status(SUCCESS_STATUS).send(cards.map(formatCard)))
     .catch(next);
 };
 
 const createCard = (req, res, next) => {
   const { name, link } = req.body;
   Card.create({ title: name, link, owner: req.user._id })
-    .then((card) => res.status(201).send({
+    .then((card) => res.status(CREATED_STATUS).send({
       name: card.title,
       link: card.link,
       _id: card._id,
@@ -64,7 +69,7 @@ const deleteCard = (req, res, next) => {
       }
       Card.deleteOne({ _id: req.params.cardId })
         .then(() => {
-          res.status(200).send({ message: 'Пост удалён.' });
+          res.status(SUCCESS_STATUS).send({ message: 'Пост удалён.' });
         });
     })
     .catch((err) => {
@@ -85,7 +90,7 @@ const updateCardLikes = (req, res, updateQuery, next) => {
       if (!card) {
         throw new NotFoundError('Передан несуществующий _id карточки.');
       }
-      res.status(200).send(formatCard(card));
+      res.status(SUCCESS_STATUS).send(formatCard(card));
     })
     .catch((err) => {
       if (err instanceof mongoose.Error.CastError) {

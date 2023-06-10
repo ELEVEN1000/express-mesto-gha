@@ -9,6 +9,11 @@ const ConflictError = require('../utils/errors/conflictError');
 const NotFoundError = require('../utils/errors/notFoundError');
 const UnauthorizedError = require("../utils/errors/unauthorizedError");
 
+const {
+  SUCCESS_STATUS,
+  CREATED_STATUS,
+} = require('../utils/constants');
+
 const formatUserData = (user) => ({
   name: user.name,
   about: user.about,
@@ -17,14 +22,13 @@ const formatUserData = (user) => ({
   email: user.email,
 });
 
-
 const getUserById = (req, res, next) => {
   User.findById(req.params.userId)
     .orFail(() => {
       throw new NotFoundError('Пользователь по указанному _id не найден');
     })
     .then((user) => {
-      res.status(200).send(formatUserData(user));
+      res.status(SUCCESS_STATUS).send(formatUserData(user));
     })
     .catch((err) => {
       if (err instanceof mongoose.Error.CastError) {
@@ -50,7 +54,7 @@ const createUser = (req, res, next) => {
       email,
       password: hash,
     })
-    .then((user) => res.status(201).send(formatUserData(user)))
+    .then((user) => res.status(CREATED_STATUS).send(formatUserData(user)))
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
         return next(new BadRequestError('Переданы некорректные данные при создании пользователя.'));
@@ -91,7 +95,7 @@ const login = (req, res, next) => {
 
 const getUser = (req, res, next) => {
   User.find({})
-    .then((users) => res.status(200).send(users.map((user) => formatUserData(user))))
+    .then((users) => res.status(SUCCESS_STATUS).send(users.map((user) => formatUserData(user))))
     .catch(next);
 };
 
@@ -100,7 +104,7 @@ const getUserInfo = (req, res, next) => {
     .orFail(() => {
       throw new NotFoundError('Пользователь по указанному _id не найден');
     })
-    .then((user) => res.status(200).send(formatUserData(user)))
+    .then((user) => res.status(SUCCESS_STATUS).send(formatUserData(user)))
     .catch(next);
 };
 
@@ -114,7 +118,7 @@ const updateUser = (req, res, next) => {
       throw new NotFoundError('Пользователь по указанному _id не найден');
     })
     .then((user) => {
-      res.status(200).send(formatUserData(user));
+      res.status(SUCCESS_STATUS).send(formatUserData(user));
     })
     .catch((err) => {
       if (err instanceof mongoose.Error.ValidationError) {
