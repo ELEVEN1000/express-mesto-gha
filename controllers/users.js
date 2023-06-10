@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const { Error } = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
@@ -24,17 +24,15 @@ const formatUserData = (user) => ({
 
 const getUserById = (req, res, next) => {
   User.findById(req.params.userId)
-    .orFail(() => {
-      throw new NotFoundError('Пользователь по указанному _id не найден');
-    })
+    .orFail()
     .then((user) => {
       res.status(SUCCESS_STATUS).send(formatUserData(user));
     })
     .catch((err) => {
-      if (err instanceof mongoose.Error.CastError) {
+      if (err instanceof Error.CastError) {
         return next(new BadRequestError('Пользователь по указанному _id не найден.'));
       }
-      if (err instanceof mongoose.Error.DocumentNotFoundError) {
+      if (err instanceof Error.DocumentNotFoundError) {
         return next(new NotFoundError('Пользователь с таким id не найден'));
       }
       return next(err);
@@ -56,7 +54,7 @@ const createUser = (req, res, next) => {
     })
     .then((user) => res.status(CREATED_STATUS).send(formatUserData(user)))
     .catch((err) => {
-      if (err instanceof mongoose.Error.ValidationError) {
+      if (err instanceof Error.ValidationError) {
         return next(new BadRequestError('Переданы некорректные данные при создании пользователя.'));
       }
       if (err.code === 11000) {
@@ -86,7 +84,7 @@ const login = (req, res, next) => {
       throw new UnauthorizedError('Переданы неверные email или пароль');
     }))
     .catch((err) => {
-      if (err instanceof mongoose.Error.DocumentNotFoundError) {
+      if (err instanceof Error.DocumentNotFoundError) {
         return next(new UnauthorizedError('Переданы неверные email или пароль'));
       }
       return next(err);
@@ -121,7 +119,7 @@ const updateUser = (req, res, next) => {
       res.status(SUCCESS_STATUS).send(formatUserData(user));
     })
     .catch((err) => {
-      if (err instanceof mongoose.Error.ValidationError) {
+      if (err instanceof Error.ValidationError) {
         return next(new BadRequestError('Переданы некорректные данные при обновлении пользователя.'));
       }
       return next(err);

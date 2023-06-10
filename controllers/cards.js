@@ -1,3 +1,4 @@
+const { Error } = require('mongoose');
 const Card = require('../models/card');
 
 const BadRequestError = require('../utils/errors/badRequestError');
@@ -43,7 +44,7 @@ const createCard = (req, res, next) => {
   const { name, link } = req.body;
   Card.create({ title: name, link, owner: req.user._id })
     .then((card) => res.status(CREATED_STATUS).send({
-      name: card.title,
+      name: card.name,
       link: card.link,
       _id: card._id,
     }))
@@ -73,10 +74,10 @@ const deleteCard = (req, res, next) => {
         });
     })
     .catch((err) => {
-      if (err instanceof mongoose.Error.CastError) {
+      if (err instanceof Error.CastError) {
         return next(new BadRequestError('Карточка с указанным _id не найдена.'));
       }
-      if (err instanceof mongoose.Error.DocumentNotFoundError) {
+      if (err instanceof Error.DocumentNotFoundError) {
         return next(new NotFoundError('Передан несуществующий _id карточки.'));
       }
       return next(err);
@@ -93,7 +94,7 @@ const updateCardLikes = (req, res, updateQuery, next) => {
       res.status(SUCCESS_STATUS).send(formatCard(card));
     })
     .catch((err) => {
-      if (err instanceof mongoose.Error.CastError) {
+      if (err instanceof Error.CastError) {
         return next(new BadRequestError('Переданы некорректные данные для постановки/снятии лайка.'));
       }
       return next(err);
