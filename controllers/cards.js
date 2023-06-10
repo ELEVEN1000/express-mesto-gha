@@ -6,6 +6,7 @@ const NotFoundError = require('../utils/errors/notFoundError');
 
 const {
   SUCCESS_STATUS,
+  CREATED_STATUS,
 } = require('../utils/constants');
 const ForbiddenError = require("../utils/errors/forbiddenError");
 
@@ -44,7 +45,7 @@ const getCards = (req, res, next) => {
 const createCard = (req, res, next) => {
   const { name, link } = req.body;
   Card.create({ title: name, link, owner: req.user._id })
-    .then((card) => res.status(201).send({
+    .then((card) => res.status(CREATED_STATUS).send({
       name: card.title,
       link: card.link,
       _id: card._id,
