@@ -7,12 +7,23 @@ const BadRequestError = require('../utils/errors/badRequestError');
 const ConflictError = require('../utils/errors/conflictError');
 const NotFoundError = require('../utils/errors/notFoundError');
 
+const formatUserData = (user) => ({
+  name: user.name,
+  about: user.about,
+  avatar: user.avatar,
+  _id: user._id,
+  email: user.email,
+});
+
+
 const getUserById = (req, res, next) => {
   User.findById(req.params.userId)
     .orFail(() => {
       throw new NotFoundError('Пользователь по указанному _id не найден');
     })
-    .then((user) => res.send({ data: user }))
+    .then((user) => {
+      res.status(200).send(formatUserData(user));
+    })
     .catch((err) => {
       if (err.name === 'CastError') {
         return next(new BadRequestError('Некорректный id пользователя'));
@@ -34,13 +45,7 @@ const createUser = (req, res, next) => {
       email,
       password: hash,
     }))
-    .then((user) => res.status(201).send({
-      _id: user._id,
-      name: user.name,
-      about: user.about,
-      avatar: user.avatar,
-      email: user.email,
-    }))
+    .then((user) => res.status(201).send(formatUserData(user)))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return next(
@@ -71,7 +76,7 @@ const login = (req, res, next) => {
 
 const getUser = (req, res, next) => {
   User.find({})
-    .then((users) => res.send({ data: users }))
+    .then((users) => res.status(200).send(users.map((user) => formatUserData(user))))
     .catch(next);
 };
 
@@ -80,7 +85,7 @@ const getUserInfo = (req, res, next) => {
     .orFail(() => {
       throw new NotFoundError('Пользователь по указанному _id не найден');
     })
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.status(200).send(formatUserData(user)))
     .catch(next);
 };
 
@@ -93,7 +98,9 @@ const updateUser = (req, res, next) => {
     .orFail(() => {
       throw new NotFoundError('Пользователь по указанному _id не найден');
     })
-    .then((user) => res.send({ data: user }))
+    .then((user) => {
+      res.status(200).send(formatUserData(user));
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         return next(
