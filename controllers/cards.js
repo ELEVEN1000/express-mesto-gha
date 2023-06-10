@@ -1,5 +1,4 @@
 const Card = require('../models/card');
-const mongoose = require('mongoose');
 const { Error } = require('mongoose');
 
 const {
@@ -7,11 +6,9 @@ const {
   CREATED_STATUS,
 } = require('../utils/constants');
 
-const {
-  BadRequestError,
-  NotFoundError,
-  ForbiddenError,
-} = require('../utils/errors/');
+const BadRequestError = require('../utils/errors/badRequestError');
+const NotFoundError = require('../utils/errors/notFoundError');
+const ForbiddenError = require('../utils/errors/forbiddenError');
 
 const populateOptions = [
   { path: 'likes', select: ['name', 'about', 'avatar', '_id'] },
@@ -75,10 +72,10 @@ const deleteCard = (req, res, next) => {
         });
     })
     .catch((err) => {
-      if (err instanceof mongoose.Error.CastError) {
+      if (err instanceof Error.CastError) {
         return next(new BadRequestError('Карточка с указанным _id не найдена.'));
       }
-      if (err instanceof mongoose.Error.DocumentNotFoundError) {
+      if (err instanceof Error.DocumentNotFoundError) {
         return next(new NotFoundError('Передан несуществующий _id карточки.'));
       }
       return next(err);

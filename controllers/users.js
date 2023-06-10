@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { Error } = require('mongoose');
 const User = require('../models/user');
 
 const {
@@ -7,14 +8,10 @@ const {
   CREATED_STATUS,
 } = require('../utils/constants');
 
-const {
-  ConflictError,
-  BadRequestError,
-  NotFoundError,
-  UnauthorizedError,
-} = require('../utils/errors/');
-
-const { Error } = require("mongoose");
+const BadRequestError = require('../utils/errors/badRequestError');
+const ConflictError = require('../utils/errors/conflictError');
+const NotFoundError = require('../utils/errors/notFoundError');
+const UnauthorizedError = require('../utils/errors/unauthorizedError');
 
 const formatUserData = (user) => ({
   name: user.name,
