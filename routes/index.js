@@ -1,21 +1,27 @@
-const router = require('express').Router();
+const express = require('express');
 const { errors } = require('celebrate');
-const userRouter = require('./users');
-const cardRouter = require('./cards');
-const NotFoundError = require('../utils/errors/notFoundError');
-const { login, createUser } = require('../controllers/users');
-const { loginValidator, signupValidator } = require('../middlewares/validation');
+const usersRouter = require('./users');
+const cardsRouter = require('./cards');
 const auth = require('../middlewares/auth');
+const { createUser, login } = require('../controllers/users');
+const {
+  loginValidator,
+  signupValidator,
+} = require('../middlewares/validation');
+const NotFoundError = require('../utils/errors/notFoundError');
+
+const router = express.Router();
 
 router.post('/signin', loginValidator, login);
 router.post('/signup', signupValidator, createUser);
 
 router.use(auth);
 
-router.use('/users', userRouter);
-router.use('/cards', cardRouter);
+router.use('/users', usersRouter);
+router.use('/cards', cardsRouter);
 
-router.use('*', (req, res, next) => next(new NotFoundError('Ресурс не найден')));
+// Middleware для обработки несуществующих путей
+router.use((req, res, next) => next(new NotFoundError('Маршрут не найден')));
 
 router.use(errors());
 
