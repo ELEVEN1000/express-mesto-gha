@@ -8,7 +8,7 @@ const {
   SUCCESS_STATUS,
   CREATED_STATUS,
 } = require('../utils/constants');
-const ForbiddenError = require("../utils/errors/forbiddenError");
+const ForbiddenError = require('../utils/errors/forbiddenError');
 
 const populateOptions = [
   { path: 'likes', select: ['name', 'about', 'avatar', '_id'] },
@@ -33,7 +33,6 @@ const formatCard = (card) => ({
   },
   createdAt: card.createdAt,
 });
-
 
 const getCards = (req, res, next) => {
   Card.find({})
@@ -102,13 +101,12 @@ const updateCardLikes = (req, res, updateQuery, next) => {
 const likeCard = (req, res, next) => {
   const updateQuery = { $addToSet: { likes: req.user._id } };
   updateCardLikes(req, res, updateQuery, next);
-}
+};
 
 const dislikeCard = (req, res, next) => {
   const updateQuery = { $addToSet: { likes: req.user._id } };
   updateCardLikes(req, res, updateQuery, next);
-}
-
+};
 
 module.exports = {
   getCards,
