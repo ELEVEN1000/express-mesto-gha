@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
@@ -6,6 +7,7 @@ const config = require('../utils/config');
 const BadRequestError = require('../utils/errors/badRequestError');
 const ConflictError = require('../utils/errors/conflictError');
 const NotFoundError = require('../utils/errors/notFoundError');
+const UnauthorizedError = require("../utils/errors/unauthorizedError");
 
 const formatUserData = (user) => ({
   name: user.name,
@@ -25,8 +27,11 @@ const getUserById = (req, res, next) => {
       res.status(200).send(formatUserData(user));
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
-        return next(new BadRequestError('Некорректный id пользователя'));
+      if (err instanceof mongoose.Error.CastError) {
+        return next(new BadRequestError('Пользователь по указанному _id не найден.'));
+      }
+      if (err instanceof mongoose.Error.DocumentNotFoundError) {
+        return next(new NotFoundError('Пользователь с таким id не найден'));
       }
       return next(err);
     });
@@ -44,34 +49,44 @@ const createUser = (req, res, next) => {
       avatar,
       email,
       password: hash,
-    }))
+    })
     .then((user) => res.status(201).send(formatUserData(user)))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        return next(
-          new BadRequestError(
-            'Переданы некорректные данные при создании пользователя',
-          ),
-        );
+      if (err instanceof mongoose.Error.ValidationError) {
+        return next(new BadRequestError('Переданы некорректные данные при создании пользователя.'));
       }
       if (err.code === 11000) {
-        return next(new ConflictError('Пользователь с таким email уже существует'));
+        return next(new ConflictError('Пользователь с таким email уже зарегистрирован'));
       }
       return next(err);
-    });
+    })
+    .catch(next));
 };
 
 const login = (req, res, next) => {
   const { email, password } = req.body;
-
-  User.findUserByCredentials(email, password)
-    .then((user) => {
-      const token = jwt.sign({ _id: user._id }, config, {
-        expiresIn: '7d',
-      });
-      res.send({ _id: token });
-    })
-    .catch(next);
+  User.findOne({ email })
+    .select('+password')
+    .orFail()
+    .then((user) => bcrypt.compare(password, user.password).then((match) => {
+      if (match) {
+        const token = jwt.sign({ _id: user._id }, config.jwtSecretKey, {
+          expiresIn: '7d',
+        });
+        res.cookie('jwtToken', token, {
+          maxAge: 3600,
+          httpOnly: true,
+        });
+        return res.send({ jwtToken: token });
+      }
+      throw new UnauthorizedError('Переданы неверные email или пароль');
+    }))
+    .catch((err) => {
+      if (err instanceof mongoose.Error.DocumentNotFoundError) {
+        return next(new UnauthorizedError('Переданы неверные email или пароль'));
+      }
+      return next(err);
+    });
 };
 
 const getUser = (req, res, next) => {
@@ -102,12 +117,8 @@ const updateUser = (req, res, next) => {
       res.status(200).send(formatUserData(user));
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        return next(
-          new BadRequestError(
-            'Переданы некорректные данные при обновлении данных профиля пользователя',
-          ),
-        );
+      if (err instanceof mongoose.Error.ValidationError) {
+        return next(new BadRequestError('Переданы некорректные данные при обновлении пользователя.'));
       }
       return next(err);
     });
