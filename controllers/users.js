@@ -55,17 +55,17 @@ const createUser = (req, res, next) => {
       email,
       password: hash,
     })
-    .then((user) => res.status(CREATED_STATUS).send(formatUserData(user)))
-    .catch((err) => {
-      if (err instanceof Error.ValidationError) {
-        return next(new BadRequestError('Переданы некорректные данные при создании пользователя.'));
-      }
-      if (err.code === 11000) {
-        return next(new ConflictError('Пользователь с таким email уже зарегистрирован'));
-      }
-      return next(err);
-    })
-    .catch(next));
+      .then((user) => res.status(CREATED_STATUS).send(formatUserData(user)))
+      .catch((err) => {
+        if (err instanceof Error.ValidationError) {
+          return next(new BadRequestError('Переданы некорректные данные при создании пользователя.'));
+        }
+        if (err.code === 11000) {
+          return next(new ConflictError('Пользователь с таким email уже зарегистрирован'));
+        }
+        return next(err);
+      })
+      .catch(next));
 };
 
 const login = (req, res, next) => {
