@@ -8,6 +8,7 @@ const { loginValidator, signupValidator } = require('./middlewares/validation');
 
 const errorHandler = require('./middlewares/errorHandler');
 const auth = require('./middlewares/auth');
+
 const { PORT = 3000 } = process.env;
 const app = express();
 
