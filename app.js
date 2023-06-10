@@ -26,11 +26,11 @@ const { PORT = 3000 } = process.env;
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(cookieParser());
-app.use(require('./routes/index'));
 app.use(errors);
 app.use(helmet());
 app.use(auth);
 app.use(router);
+app.use(require('./routes/index'));
 
 app.listen(PORT, () => {
 });
