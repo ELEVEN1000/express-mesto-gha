@@ -1,13 +1,13 @@
-const path = require('path');
 const express = require('express');
-const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
-const helmet = require('helmet');
-const router = require('./routes');
-const auth = require('./middlewares/auth');
-const errors = require('./middlewares/errors');
-const { loginValidator, signupValidator } = require('./middlewares/validation');
+const { errors } = require('celebrate');
+const router = require('./routes/index');
 const { login, createUser } = require('./controllers/users');
+const { loginValidator, signupValidator } = require('./middlewares/validation');
+const auth = require('./middlewares/auth');
+const { PORT = 3000 } = process.env;
+const errorHandler = require('./middlewares/errorHandler');
+const helmet = require('helmet');
 
 const app = express();
 
@@ -21,16 +21,11 @@ app.use(express.json());
 router.post('/signin', loginValidator, login);
 router.post('/signup', signupValidator, createUser);
 
-const { PORT = 3000 } = process.env;
-
-app.use(express.static(path.join(__dirname, 'public')));
-
-app.use(cookieParser());
-app.use(errors);
+app.use(errorHandler);
 app.use(helmet());
 app.use(auth);
 app.use(router);
-app.use(require('./routes/index'));
+app.use(errors());
 
 app.listen(PORT, () => {
 });
