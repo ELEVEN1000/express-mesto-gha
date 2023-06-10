@@ -7,18 +7,17 @@ const BadRequestError = require('../utils/errors/badRequestError');
 const ConflictError = require('../utils/errors/conflictError');
 const NotFoundError = require('../utils/errors/notFoundError');
 
-const getUserById = (req, res) => {
+const getUserById = (req, res, next) => {
   User.findById(req.params.userId)
-    .orFail(new Error('NotFound'))
-    .then((users) => res.send(users))
+    .orFail(() => {
+      throw new NotFoundError('Пользователь по указанному _id не найден');
+    })
+    .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(BadRequestError).send({ message: 'Переданы некорректные данные' });
-      } else if (err.message === 'NotFound') {
-        res.status(NotFoundError).send({ message: 'Пользователь по указанному id не найден' });
-      } else {
-        res.status(NotFoundError).send({ message: 'На сервере произошла ошибка' });
+        return next(new BadRequestError('Некорректный id пользователя'));
       }
+      return next(err);
     });
 };
 
