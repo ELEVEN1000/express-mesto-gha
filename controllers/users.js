@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const { Error } = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -125,12 +126,12 @@ const updateUser = (req, res, updateData, next) => {
 const updateAvatar = (req, res) => {
   const { avatar } = req.body;
   updateUser(req, res, { avatar });
-}
+};
 
 const updateProfile = (req, res) => {
   const { name, about } = req.body;
   updateUser(req, res, { name, about });
-}
+};
 
 module.exports = {
   getUser,
