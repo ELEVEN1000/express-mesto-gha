@@ -2,9 +2,9 @@ const router = require('express').Router();
 
 const {
   getUserByIdValidator,
-  updateAvatarValidator,
+  updateAvatarValidator ,
   updateProfileValidator ,
-} = require("../middlewares/validation");
+} = require('../middlewares/validation');
 
 const {
   getUserById,
@@ -12,7 +12,7 @@ const {
   updateUserAvatar,
   getUser,
   getUserInfo,
-} = require("../controllers/users");
+} = require('../controllers/users');
 
 router.get('/', getUser);
 router.get('/:userId', getUserByIdValidator, getUserById);

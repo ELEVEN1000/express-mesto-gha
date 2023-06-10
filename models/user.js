@@ -30,13 +30,14 @@ const userSchema = new mongoose.Schema({
     validate(value) {
       if (!validator.isEmail(value)) {
         throw new Error('Некорректный email');
-      }}
+      }
+    },
   },
   password: {
     type: String,
     required: [true, 'Поле "password" должно быть заполнено'],
     select: false,
-  }
+  },
 }, { versionKey: false });
 
 userSchema.index({ email: 1 }, { unique: true });

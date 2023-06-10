@@ -42,7 +42,7 @@ const createUser = (req, res) => {
     about,
     avatar,
     email,
-    password
+    password,
   } = req.body;
 
   bcrypt

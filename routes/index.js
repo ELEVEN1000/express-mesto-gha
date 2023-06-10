@@ -3,7 +3,7 @@ const userRouter = require('./users');
 const cardRouter = require('./cards');
 const { ERROR_CODE_NOT_FOUND } = require('../utils/constants');
 const { login, createUser } = require('../controllers/users');
-const { loginValidator, signupValidator } = require("../middlewares/validation");
+const { loginValidator, signupValidator } = require('../middlewares/validation');
 
 router.post('/signin', loginValidator, login);
 router.post('/signup', signupValidator, createUser);
