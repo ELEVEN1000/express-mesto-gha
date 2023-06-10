@@ -106,25 +106,31 @@ const getUserInfo = (req, res, next) => {
     .catch(next);
 };
 
-const updateUser = (req, res, next) => {
-  const { name, about, avatar } = req.body;
-  User.findByIdAndUpdate(req.user._id, avatar ? { avatar } : { name, about }, {
+const updateUser = (req, res, updateData, next) => {
+  User.findByIdAndUpdate(req.user._id, updateData, {
     new: true,
     runValidators: true,
   })
-    .orFail(() => {
-      throw new NotFoundError('Пользователь по указанному _id не найден');
-    })
     .then((user) => {
       res.status(SUCCESS_STATUS).send(formatUserData(user));
     })
     .catch((err) => {
-      if (err instanceof Error.ValidationError) {
+      if (err instanceof mongoose.Error.ValidationError) {
         return next(new BadRequestError('Переданы некорректные данные при обновлении пользователя.'));
       }
       return next(err);
     });
 };
+
+const updateAvatar = (req, res) => {
+  const { avatar } = req.body;
+  updateUser(req, res, { avatar });
+}
+
+const updateProfile = (req, res) => {
+  const { name, about } = req.body;
+  updateUser(req, res, { name, about });
+}
 
 module.exports = {
   getUser,
@@ -133,4 +139,6 @@ module.exports = {
   updateUser,
   login,
   getUserInfo,
+  updateAvatar,
+  updateProfile,
 };
