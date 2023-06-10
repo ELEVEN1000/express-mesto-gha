@@ -20,7 +20,6 @@ router.use(auth);
 router.use('/users', usersRouter);
 router.use('/cards', cardsRouter);
 
-// Middleware для обработки несуществующих путей
 router.use((req, res, next) => next(new NotFoundError('Маршрут не найден')));
 
 router.use(errors());

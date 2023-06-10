@@ -1,4 +1,4 @@
-const { Error } = require('mongoose');
+const mongoose = require('mongoose');
 const Card = require('../models/card');
 
 const BadRequestError = require('../utils/errors/badRequestError');
@@ -8,6 +8,7 @@ const {
   SUCCESS_STATUS,
   CREATED_STATUS,
 } = require('../utils/constants');
+const ForbiddenError = require("../utils/errors/forbiddenError");
 
 const populateOptions = [
   { path: 'likes', select: ['name', 'about', 'avatar', '_id'] },
@@ -36,25 +37,22 @@ const formatCard = (card) => ({
 
 const getCards = (req, res, next) => {
   Card.find({})
+    .populate(populateOptions)
     .then((cards) => res.status(SUCCESS_STATUS).send(cards.map(formatCard)))
-    .catch(next);
+    .catch((err) => next(err));
 };
 
 const createCard = (req, res, next) => {
   const { name, link } = req.body;
   Card.create({ title: name, link, owner: req.user._id })
     .then((card) => res.status(CREATED_STATUS).send({
-      name: card.name,
+      name: card.title,
       link: card.link,
       _id: card._id,
     }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        return next(
-          new BadRequestError(
-            'Переданы некорректные данные при создании карточки',
-          ),
-        );
+      if (err instanceof mongoose.Error.ValidationError) {
+        return next(new BadRequestError('Переданы некорректные данные при создании карточки.'));
       }
       return next(err);
     });
@@ -66,7 +64,7 @@ const deleteCard = (req, res, next) => {
     .orFail()
     .then((card) => {
       if (card.owner._id.toString() !== userId) {
-        throw new NotFoundError('Карточка с указанным _id не найдена');
+        throw new ForbiddenError('Нет прав для удаления карточки с указанным _id');
       }
       Card.deleteOne({ _id: req.params.cardId })
         .then(() => {
@@ -74,10 +72,10 @@ const deleteCard = (req, res, next) => {
         });
     })
     .catch((err) => {
-      if (err instanceof Error.CastError) {
+      if (err instanceof mongoose.Error.CastError) {
         return next(new BadRequestError('Карточка с указанным _id не найдена.'));
       }
-      if (err instanceof Error.DocumentNotFoundError) {
+      if (err instanceof mongoose.Error.DocumentNotFoundError) {
         return next(new NotFoundError('Передан несуществующий _id карточки.'));
       }
       return next(err);
@@ -94,7 +92,7 @@ const updateCardLikes = (req, res, updateQuery, next) => {
       res.status(SUCCESS_STATUS).send(formatCard(card));
     })
     .catch((err) => {
-      if (err instanceof Error.CastError) {
+      if (err instanceof mongoose.Error.CastError) {
         return next(new BadRequestError('Переданы некорректные данные для постановки/снятии лайка.'));
       }
       return next(err);
