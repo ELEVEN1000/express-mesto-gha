@@ -14,8 +14,8 @@ const signupValidator = celebrate({
     email: Joi.string().required().email(),
     password: Joi.string().required().min(6),
     name: Joi.string().required().min(2).max(30),
-    about: Joi.string().required().min(2).max(30),
-    avatar: Joi.string().required().regex(regexLink),
+    about: Joi.string().min(2).max(30),
+    avatar: Joi.string().regex(regexLink),
   }),
 });
 
