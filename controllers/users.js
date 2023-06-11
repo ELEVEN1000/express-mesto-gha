@@ -8,12 +8,12 @@ const config = require('../utils/config');
 const BadRequestError = require('../utils/errors/badRequestError');
 const ConflictError = require('../utils/errors/conflictError');
 const NotFoundError = require('../utils/errors/notFoundError');
+const UnauthorizedError = require('../utils/errors/unauthorizedError');
 
 const {
   SUCCESS_STATUS,
   CREATED_STATUS,
 } = require('../utils/constants');
-const UnauthorizedError = require("../utils/errors/unauthorizedError");
 
 const formatUserData = (user) => ({
   name: user.name,
