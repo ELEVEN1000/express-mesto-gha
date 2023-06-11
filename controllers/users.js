@@ -92,7 +92,7 @@ const login = (req, res, next) => {
     });
 };
 
-const getUser = (req, res, next) => {
+const getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.status(SUCCESS_STATUS).send(users.map((user) => formatUserData(user))))
     .catch(next);
@@ -134,7 +134,7 @@ const updateProfile = (req, res) => {
 };
 
 module.exports = {
-  getUser,
+  getUsers,
   getUserById,
   createUser,
   updateUser,

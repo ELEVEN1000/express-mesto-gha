@@ -1,4 +1,3 @@
-const path = require('path');
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
@@ -13,7 +12,6 @@ const { PORT = 3000 } = process.env;
 
 const app = express();
 
-app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(express.json());
 

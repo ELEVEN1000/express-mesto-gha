@@ -4,7 +4,12 @@ const config = require('../utils/config');
 const UnauthorizedError = require('../utils/errors/unauthorizedError');
 
 module.exports = (req, res, next) => {
-  const token = req.cookies.jwtToken;
+  const { authorization } = req.headers;
+  const bearer = 'Bearer ';
+  if (!authorization || !authorization.startsWith(bearer)) {
+    throw new UnauthorizedError('Необходима авторизация');
+  }
+  const token = authorization.replace(bearer, '');
   let payload;
 
   try {
