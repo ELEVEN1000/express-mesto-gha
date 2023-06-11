@@ -1,7 +1,3 @@
-export function findUserByCredentials(email, password) {
-
-}
-
 const mongoose = require('mongoose');
 const { isURL, isEmail } = require('validator');
 
