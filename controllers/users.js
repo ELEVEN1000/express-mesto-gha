@@ -13,6 +13,7 @@ const {
   SUCCESS_STATUS,
   CREATED_STATUS,
 } = require('../utils/constants');
+const UnauthorizedError = require("../utils/errors/unauthorizedError");
 
 const formatUserData = (user) => ({
   name: user.name,
@@ -67,15 +68,28 @@ const createUser = (req, res, next) => {
 
 const login = (req, res, next) => {
   const { email, password } = req.body;
-
-  User.findUserByCredentials(email, password)
-    .then((user) => {
-      const token = jwt.sign({ _id: user._id }, config, {
-        expiresIn: '7d',
-      });
-      res.send({ _id: token });
-    })
-    .catch(next);
+  User.findOne({ email })
+    .select('+password')
+    .orFail()
+    .then((user) => bcrypt.compare(password, user.password).then((match) => {
+      if (match) {
+        const token = jwt.sign({ _id: user._id }, config.jwtSecretKey, {
+          expiresIn: '7d',
+        });
+        res.cookie('jwtToken', token, {
+          maxAge: 3600,
+          httpOnly: true,
+        });
+        return res.send({ jwtToken: token });
+      }
+      throw new UnauthorizedError('Переданы неверные email или пароль');
+    }))
+    .catch((err) => {
+      if (err instanceof Error.DocumentNotFoundError) {
+        return next(new UnauthorizedError('Переданы неверные email или пароль'));
+      }
+      return next(err);
+    });
 };
 
 const getUsers = (req, res, next) => {
